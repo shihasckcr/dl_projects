@@ -1,1 +1,3 @@
-diabetic_retinopathy
+Projects
+-------------
+  diabetic_retinopathy
