@@ -1,0 +1,6 @@
+data
+best_model.keras
+split_dataset
+crop_disease_model.keras
+final_crop_model.keras
+final_model.keras

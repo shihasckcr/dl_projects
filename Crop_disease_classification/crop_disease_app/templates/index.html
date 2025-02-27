@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Disease Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        #upload-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        img {
+            max-width: 300px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #218838;
+        }
+        #prediction-result {
+            font-size: 18px;
+            margin-top: 15px;
+            color: #222;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crop Disease Detection</h1>
+    <div id="upload-container">
+        <input type="file" id="fileInput" accept="image/*">
+        <br>
+        <img id="imagePreview" src="#" alt="Image Preview" style="display:none;">
+        <br>
+        <button onclick="uploadImage()">Predict Disease</button>
+        <p id="prediction-result"></p>
+    </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function uploadImage() {
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files.length) {
+                alert("Please select an image first.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            fetch('/predict', {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("prediction-result").innerHTML = "❌ Error: " + data.error;
+                } else {
+                    document.getElementById("prediction-result").innerHTML = "✅ Prediction: " + data.prediction;
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("prediction-result").innerHTML = "❌ Error making prediction.";
+            });
+        }
+    </script>
+</body>
+</html>
+
